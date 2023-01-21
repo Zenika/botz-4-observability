@@ -1,0 +1,36 @@
+version: "3.5"
+
+networks:
+  observability_tutorial:
+    external: true
+    name: observability_tutorial
+
+services:
+
+  api-service:
+    build: api-service/
+    image: api-service:latest
+    networks:
+      - observability_tutorial
+    ports:
+      - "8080:8080"
+
+  customer-service:
+    build: ./customer-service/
+    image: customer-service:latest
+    networks:
+      - observability_tutorial
+    ports:
+      - "8081"
+
+  collector:
+    image: otel/opentelemetry-collector-contrib:0.69.0
+    command: [ "--config=/etc/otel-collector/config.yml" ]
+    ports:
+      - "8889:8889"
+      - "55679:55679"
+    volumes:
+      - ./otel-collector:/etc/otel-collector/
+    networks:
+      - observability_tutorial
+
