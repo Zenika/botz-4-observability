@@ -1,3 +1,4 @@
 .mvn
 api-service/target/
 customer-service/target/
+.vscode
