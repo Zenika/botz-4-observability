@@ -24,24 +24,6 @@ services:
     ports:
       - "3000:3000"
 
-  loki:
-    image: grafana/loki:2.7.1
-    command:
-      - -config.file
-      - /etc/loki/config.yml
-    volumes:
-      - ./loki:/etc/loki:ro
-    networks:
-      - observability_tutorial
-
-#  promtail:
-#    image: grafana/promtail:2.7.1
-#    networks:
-#      - observability_tutorial
-#    volumes:
-#      - observability_tutorial:/logs
-#      - ./promtail:/etc/promtail:ro
-
   tempo:
     image: grafana/tempo:1.5.0
     command: --config.file=/etc/tempo/config.yml
@@ -49,10 +31,3 @@ services:
       - ./tempo:/etc/tempo:ro
     networks:
       - observability_tutorial
-
-  prometheus:
-    image: bitnami/prometheus:2.41.0
-    networks:
-      - observability_tutorial
-    volumes:
-      - ./prometheus:/etc/prometheus:ro
