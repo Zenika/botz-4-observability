@@ -1,36 +1,69 @@
 version: "3.5"
 
-networks:
-  observability_tutorial:
-    external: true
-    name: observability_tutorial
 
 services:
 
   api-service:
-    build: api-service/
     image: api-service:latest
+    build:
+      dockerfile: Dockerfile
+      args:
+        maven_module: api-service
+        application_name: api-service
     networks:
-      - observability_tutorial
+      - botz_4_observability
+    volumes:
+      - botz_4_observability:/log
+    environment:
+      SPRING_MAIN_BANNER_MODE: off
+      SPRING_PROFILES_INCLUDE: "log_file"
+      OBSERVABILITY_GLOBALAPPLICATION: "customer-application"
+      OBSERVABILITY_TRACING_ENABLED: "true"
+      OBSERVABILITY_TRACING_RATIO:  1.0
+      OBSERVABILITY_TRACING_ENDPOINT: "http://tempo:4317"
+      LOG_DIRECTORY: /log
+      CLIENTS_SERVICEURL: "http://customer-service:8080"
+      LISTEN_PORT: 8080
+
     ports:
       - "8080:8080"
 
   customer-service:
-    build: ./customer-service/
     image: customer-service:latest
+    build:
+      dockerfile: Dockerfile
+      args:
+        maven_module: customer-service
+        application_name: customer-service
     networks:
-      - observability_tutorial
-    ports:
-      - "8081"
-
-  collector:
-    image: otel/opentelemetry-collector-contrib:0.69.0
-    command: [ "--config=/etc/otel-collector/config.yml" ]
-    ports:
-      - "8889:8889"
-      - "55679:55679"
+      - botz_4_observability
     volumes:
-      - ./otel-collector:/etc/otel-collector/
-    networks:
-      - observability_tutorial
+      - botz_4_observability:/log
+    environment:
+      SPRING_MAIN_BANNER_MODE: off
+      SPRING_PROFILES_INCLUDE: "log_file"
+      OBSERVABILITY_GLOBALAPPLICATION: "customer-application"
+      OBSERVABILITY_TRACING_ENABLED: "true"
+      OBSERVABILITY_TRACING_RATIO: 1.0
+      OBSERVABILITY_TRACING_ENDPOINT: "http://tempo:4317"
+      LOG_DIRECTORY: /log
+      LISTEN_PORT: 8080
 
+#  otel-collector:
+#    image: otel/opentelemetry-collector-contrib:0.69.0
+#    command: [ "--config=/etc/otel-collector/config.yml" ]
+#    volumes:
+#      - botz_4_observability:/log
+#      - ./otel-collector:/etc/otel-collector/
+#    networks:
+#      - botz_4_observability
+
+networks:
+  botz_4_observability:
+    external: true
+    name: botz_4_observability
+
+volumes:
+  botz_4_observability:
+    external: true
+    name: botz_4_observability

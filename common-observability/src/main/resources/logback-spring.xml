@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS} %-6level) [%X{traceId:-}%X{trace_id:-}|%X{spanId:-}%X{span_id:-}] [%X{request.method:-} %X{request.uri:-}] %logger{6} - %msg%n"/>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+
+    <springProfile name="log_file">
+        <springProperty scope="context" name="springAppName" source="spring.application.name"/>
+        <springProperty scope="context" name="applicationName" source="observability.global-application"/>
+        <property name="LOG_FILE" value="${LOG_DIRECTORY:-target}/${springAppName}"/>
+        <!-- NEED TO SET SERVICE NODE NAME AND SERVICE NAME        <include resource="co/elastic/logging/logback/boot/ecs-file-appender.xml"/>-->
+        <appender name="ECS_JSON_FILE" class="ch.qos.logback.core.FileAppender">
+            <file>${LOG_FILE}.log</file>
+            <encoder class="co.elastic.logging.logback.EcsEncoder">
+                <serviceName>${applicationName}</serviceName>
+                <serviceNodeName>${springAppName}</serviceNodeName>
+                <stackTraceAsArray>true</stackTraceAsArray>
+            </encoder>
+        </appender>
+        <root level="info">
+            <appender-ref ref="console"/>
+            <appender-ref ref="ECS_JSON_FILE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="!log_file">
+        <root level="info">
+            <appender-ref ref="console"/>
+        </root>
+    </springProfile>
+
+
+</configuration>

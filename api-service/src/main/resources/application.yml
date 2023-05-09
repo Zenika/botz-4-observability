@@ -1,31 +1,43 @@
-server.port: 8080
+server:
+  port: ${LISTEN_PORT:8080}
 
-addressClient:
-  baseUrl: http://customer-service:8081
 
-customerClient:
-  baseUrl: http://customer-service:8081
+clients:
+  service-url: http://customer-service
+  address: ${clients.service-url}
+  identity: ${clients.service-url}
+
+observability:
+  global-application: customer-application
+  tracing:
+    enabled: true
+    ratio : 0.1
+    endpoint: ""
 
 spring:
-  output:
-    ansi:
-      enabled: always
   application:
     name: api-service
 
   sleuth:
+    enabled: ${observability.tracing.enabled}
     otel:
       config:
-        trace-id-ratio-based: 1.0
+        trace-id-ratio-based: ${observability.tracing.ratio}
       exporter:
         otlp:
-          endpoint: http://collector:4317
+          enabled: ${observability.tracing.enabled}
+          endpoint: ${observability.tracing.endpoint}
+      resource:
+        attributes:
+          "application.name": ${observability.global-application}
 
 management:
   endpoint:
-    beans:
+    prometheus:
       enabled: true
   endpoints:
     web:
       exposure:
-        include: beans
+        include:
+          - prometheus
+          - metrics

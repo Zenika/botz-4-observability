@@ -1,25 +1,52 @@
-server.port: 8081
+server:
+  port: ${LISTEN_PORT:8081}
+
+business:
+  customers:
+    1:
+      name: Mickey Mouse
+      address: Flower Street, Mickeycity
+    2:
+      name: Donald Duck
+      address: Anger road, Donaldcity
+    3:
+      name: Picsou
+      address: Hill top, Donaldcity
+    4:
+      name: Gontran
+      address: Lucky street, Donaldcity
+
+observability:
+  global-application: customer-application
+  tracing:
+    enabled: true
+    ratio : 0.1
+    endpoint: ""
 
 spring:
-  output:
-    ansi:
-      enabled: always
   application:
     name: customer-service
 
   sleuth:
+    enabled: ${observability.tracing.enabled}
     otel:
       config:
-        trace-id-ratio-based: 1.0
+        trace-id-ratio-based: ${observability.tracing.ratio}
       exporter:
         otlp:
-          endpoint: http://collector:4317
+          enabled: ${observability.tracing.enabled}
+          endpoint: ${observability.tracing.endpoint}
+      resource:
+        attributes:
+          "application.name": ${observability.global-application}
 
 management:
-  endpoint:
-    beans:
-      enabled: true
   endpoints:
     web:
       exposure:
-        include: beans
+        include:
+          - prometheus
+          - metrics
+  endpoint:
+    prometheus:
+      enabled: true

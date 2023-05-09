@@ -1,4 +1,4 @@
 .mvn
-api-service/target/
-customer-service/target/
+target/
 .vscode
+.idea/
