@@ -1,1 +1,3 @@
 com.zenika.botz.observability.common.logging.ServiceLoggerAutoConfiguration
+com.zenika.botz.observability.common.tracing.OtlpTracingExporterAutoConfiguration
+com.zenika.botz.observability.common.tracing.CustomTracingAutoConfiguration
