@@ -18,7 +18,7 @@ datasources:
         mapTagNamesEnabled: true
         mappedTags: [ { key: 'application.name', value: 'application' } ]
         tags:
-          - application
+          - service
         lokiSearch: true
 
   - name: Loki

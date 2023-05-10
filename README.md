@@ -1,7 +1,4 @@
-# Observability with springboot and sleuth
-
-This code and content is based on [https://github.com/thombergs/code-examples/tree/master/spring-cloud/tracing], with its great companion article [Tracing with Spring Boot, OpenTelemetry, and Jaeger](https://reflectoring.io/spring-boot-tracing)
-
+# Observability with springboot and micrometer
 
 ## Running and exploring this demo
  
