@@ -91,6 +91,16 @@ processors:
     send_batch_size: 5
     send_batch_max_size: 10
     timeout: 2s
+  transform/prometheus:
+    metric_statements:
+      - context: datapoint
+        statements:
+          - set(attributes["exported_job"], attributes["job"])
+          - delete_key(attributes, "job")
+          - set(attributes["exported_instance"], attributes["instance"])
+          - delete_key(attributes, "instance")
+
+
 
 exporters:
   otlp/tempo:
@@ -110,8 +120,8 @@ service:
   extensions: [zpages]
   pipelines:
     metrics:
-      receivers: [ prometheus ]
-      processors: [ batch ]
+      receivers: [ otlp ]
+      processors: [ batch, transform/prometheus ]
       exporters: [ prometheus ]
     traces:
       receivers: [ otlp ]

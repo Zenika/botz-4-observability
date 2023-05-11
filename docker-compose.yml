@@ -20,7 +20,8 @@ services:
       OBSERVABILITY_GLOBALAPPLICATION: "customer-application"
       OBSERVABILITY_TRACING_ENABLED: "true"
       OBSERVABILITY_TRACING_RATIO:  1.0
-      OBSERVABILITY_TRACING_ENDPOINT: "http://tempo:4318"
+      OBSERVABILITY_TRACING_ENDPOINT: "http://otel-collector:4318"
+      OBSERVABILITY_METRICS_ENDPOINT: "http://otel-collector:4318"
       LOG_DIRECTORY: /log
       CLIENTS_SERVICEURL: "http://customer-service:8080"
       LISTEN_PORT: 8080
@@ -45,18 +46,19 @@ services:
       OBSERVABILITY_GLOBALAPPLICATION: "customer-application"
       OBSERVABILITY_TRACING_ENABLED: "true"
       OBSERVABILITY_TRACING_RATIO: 1.0
-      OBSERVABILITY_TRACING_ENDPOINT: "http://tempo:4318"
+      OBSERVABILITY_TRACING_ENDPOINT: "http://otel-collector:4318"
+      OBSERVABILITY_METRICS_ENDPOINT: "http://otel-collector:4318"
       LOG_DIRECTORY: /log
       LISTEN_PORT: 8080
 
-#  otel-collector:
-#    image: otel/opentelemetry-collector-contrib:0.69.0
-#    command: [ "--config=/etc/otel-collector/config.yml" ]
-#    volumes:
-#      - botz_4_observability:/log
-#      - ./otel-collector:/etc/otel-collector/
-#    networks:
-#      - botz_4_observability
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.69.0
+    command: [ "--config=/etc/otel-collector/config.yml" ]
+    volumes:
+      - botz_4_observability:/log
+      - ./otel-collector:/etc/otel-collector/
+    networks:
+      - botz_4_observability
 
 networks:
   botz_4_observability:

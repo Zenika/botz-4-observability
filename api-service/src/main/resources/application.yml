@@ -13,6 +13,8 @@ observability:
     enabled: true
     ratio : 0.1
     endpoint: ""
+  metrics:
+    endpoint: ""
 
 spring:
   application:
@@ -22,17 +24,20 @@ spring:
 management:
   endpoint:
     prometheus:
-      enabled: true
+      enabled: false
   endpoints:
     web:
       exposure:
-        include:
-          - prometheus
-          - metrics
+        include: []
 
   otlp:
     tracing:
       endpoint: ${observability.tracing.endpoint}/v1/traces
+    metrics:
+      export:
+        url: ${observability.metrics.endpoint}/v1/metrics
+        resource-attributes:
+          "service.name": ${spring.application.name}
   tracing:
     enabled: ${observability.tracing.enabled}
     sampling:

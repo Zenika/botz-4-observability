@@ -4,9 +4,8 @@ global:
 
 scrape_configs:
   - job_name: "spring-applications"
-    metrics_path: "/actuator/prometheus"
+    metrics_path: "/metrics"
     scheme: "http"
     static_configs:
       - targets:
-          - "api-service:8080"
-          - "customer-service:8080"
+          - "otel-collector:8889"
