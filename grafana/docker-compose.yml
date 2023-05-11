@@ -34,16 +34,16 @@ services:
     networks:
       - botz_4_observability
 
-  promtail:
-    image: grafana/promtail:2.7.1
-    command:
-      - -config.file
-      - /etc/promtail/config.yml
-    volumes:
-      - ./promtail:/etc/promtail:ro
-      - botz_4_observability:/logs
-    networks:
-      - botz_4_observability
+#  promtail:
+#    image: grafana/promtail:2.7.1
+#    command:
+#      - -config.file
+#      - /etc/promtail/config.yml
+#    volumes:
+#      - ./promtail:/etc/promtail:ro
+#      - botz_4_observability:/logs
+#    networks:
+#      - botz_4_observability
 
   tempo:
     image: grafana/tempo:1.5.0
